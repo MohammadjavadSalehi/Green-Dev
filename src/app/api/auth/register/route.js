@@ -13,7 +13,7 @@ export const POST = async (request) => {
   const newUser = new User({
     name,
     email,
-    password,
+    password: hashedPassword,
   });
 
   try {

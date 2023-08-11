@@ -1,9 +1,10 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import { getProviders, signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { TextField, Button } from "@mui/material";
 
 const Login = ({ url }) => {
   const session = useSession();
@@ -25,15 +26,11 @@ const Login = ({ url }) => {
     router?.push("/dashboard");
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const email = e.target[0].value;
-    const password = e.target[1].value;
+  const { handleSubmit: handleFormSubmit, register } = useForm();
 
-    signIn("credentials", {
-      email,
-      password,
-    });
+  const onSubmit = (data) => {
+    const { email, password } = data;
+    signIn("credentials", { email, password });
   };
 
   return (
@@ -41,42 +38,39 @@ const Login = ({ url }) => {
       <h1 className={styles.title}>{success ? success : "Welcome Back"}</h1>
       <h2 className={styles.subtitle}>Please sign in to see the dashboard.</h2>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <input
+      <form onSubmit={handleFormSubmit(onSubmit)}>
+        <TextField
+          {...register("email", { required: true })}
           type="text"
-          placeholder="Email"
-          required
+          label="Email"
+          variant="outlined"
           className={styles.input}
         />
-        <input
+        <TextField
+          {...register("password", { required: true })}
           type="password"
-          placeholder="Password"
-          required
+          label="Password"
+          variant="outlined"
           className={styles.input}
         />
-        <button className={styles.button}>Login</button>
+        <Button variant="contained" type="submit" className={styles.button}>
+          Login
+        </Button>
         {error && error}
       </form>
-      <button
+      <Button
         onClick={() => {
           signIn("google");
         }}
+        variant="contained"
         className={styles.button + " " + styles.google}
       >
         Login with Google
-      </button>
+      </Button>
       <span className={styles.or}>- OR -</span>
       <Link className={styles.link} href="/dashboard/register">
         Create new account
       </Link>
-      {/* <button
-        onClick={() => {
-          signIn("github");
-        }}
-        className={styles.button + " " + styles.github}
-      >
-        Login with Github
-      </button> */}
     </div>
   );
 };
