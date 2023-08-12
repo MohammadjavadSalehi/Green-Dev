@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import { getProviders, signIn, useSession } from "next-auth/react";
@@ -13,38 +14,51 @@ const Login = ({ url }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const { handleSubmit, register } = useForm();
+
   useEffect(() => {
     setError(params.get("error"));
     setSuccess(params.get("success"));
   }, [params]);
 
-  if (session.status === "loading") {
-    return <p>Loading...</p>;
-  }
-
-  if (session.status === "authenticated") {
-    router?.push("/dashboard");
-  }
-
-  const { handleSubmit: handleFormSubmit, register } = useForm();
+  useEffect(() => {
+    if (session.status === "authenticated") {
+      router?.push("/dashboard");
+    }
+  }, [session, router]);
 
   const onSubmit = (data) => {
     const { email, password } = data;
+    console.log(email, "llll");
+    console.log(password, "llll");
     signIn("credentials", { email, password });
   };
+
+  if (session.status === "loading") {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>{success ? success : "Welcome Back"}</h1>
       <h2 className={styles.subtitle}>Please sign in to see the dashboard.</h2>
 
-      <form onSubmit={handleFormSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <TextField
           {...register("email", { required: true })}
           type="text"
           label="Email"
           variant="outlined"
           className={styles.input}
+          InputLabelProps={{
+            style: { color: "#bbb" },
+          }}
+          InputProps={{
+            classes: {
+              notchedOutline: styles.customBorder,
+            },
+            style: { color: "#bbb" },
+          }}
         />
         <TextField
           {...register("password", { required: true })}
@@ -52,6 +66,14 @@ const Login = ({ url }) => {
           label="Password"
           variant="outlined"
           className={styles.input}
+          InputLabelProps={{
+            style: { color: "#bbb" },
+          }}
+          InputProps={{
+            classes: {
+              notchedOutline: styles.customBorder,
+            },
+          }}
         />
         <Button variant="contained" type="submit" className={styles.button}>
           Login

@@ -28,11 +28,12 @@
   border: 2px solid #bbb;
   border-radius: 5px;
   outline: none;
-  color: #bbb;
   font-size: 20px;
   font-weight: bold;
 }
-
+.customBorder {
+  border-color: #bbb !important; /* Custom border color */
+}
 .button {
   width: 300px;
   padding: 20px;
