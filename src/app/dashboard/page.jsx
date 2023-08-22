@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+// import { connect, useDispatch, useSelector } from "react-redux";
 import styles from "./page.module.css";
 import useSWR from "swr";
 import { useSession } from "next-auth/react";
@@ -7,7 +8,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const Dashboard = () => {
-
   //OLD WAY TO FETCH DATA
 
   // const [data, setData] = useState([]);
@@ -36,7 +36,9 @@ const Dashboard = () => {
   const session = useSession();
 
   const router = useRouter();
-  
+
+  // const dispatch = useDispatch();
+
   //NEW WAY TO FETCH DATA
   const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
@@ -44,6 +46,12 @@ const Dashboard = () => {
     `/api/posts?username=${session?.data?.user.name}`,
     fetcher
   );
+
+  // useEffect(() => {
+  //   if (session?.data?.user.name) {
+  //     dispatch(fetchPosts(session.data.user.name));
+  //   }
+  // }, [dispatch, session]);
 
   if (session.status === "loading") {
     return <p>Loading...</p>;
@@ -72,7 +80,7 @@ const Dashboard = () => {
         }),
       });
       mutate();
-      e.target.reset()
+      e.target.reset();
     } catch (err) {
       console.log(err);
     }
@@ -98,7 +106,7 @@ const Dashboard = () => {
             : data?.map((post) => (
                 <div className={styles.post} key={post._id}>
                   <div className={styles.imgContainer}>
-                    <Image src={post.img} alt="" width={200} height={100} />
+                    <img src={post.img} alt="" width={200} height={100} />
                   </div>
                   <h2 className={styles.postTitle}>{post.title}</h2>
                   <span
@@ -129,3 +137,10 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+// const mapStateToProps = (state) => ({
+//   posts: state.posts,
+//   isLoading: state.isLoading,
+//   error: state.error,
+// });
+// export default connect(mapStateToProps)(Dashboard);

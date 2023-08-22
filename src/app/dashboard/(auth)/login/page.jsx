@@ -14,7 +14,11 @@ const Login = ({ url }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const { handleSubmit, register } = useForm();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     setError(params.get("error"));
@@ -29,8 +33,6 @@ const Login = ({ url }) => {
 
   const onSubmit = (data) => {
     const { email, password } = data;
-    console.log(email, "llll");
-    console.log(password, "llll");
     signIn("credentials", { email, password });
   };
 
@@ -60,6 +62,7 @@ const Login = ({ url }) => {
             style: { color: "#bbb" },
           }}
         />
+        {errors.email && <p style={{ color: "red" }}>Email is required.</p>}
         <TextField
           {...register("password", { required: true })}
           type="password"
@@ -75,6 +78,9 @@ const Login = ({ url }) => {
             },
           }}
         />
+        {errors.password && (
+          <p style={{ color: "red" }}>Password is required.</p>
+        )}
         <Button variant="contained" type="submit" className={styles.button}>
           Login
         </Button>
