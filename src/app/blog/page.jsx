@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import Link from "next/link";
-import Image from "next/image";
 
 async function getData() {
   const res = await fetch("http://localhost:3000/api/posts", {
@@ -16,8 +16,22 @@ async function getData() {
   return res.json();
 }
 
-const Blog = async () => {
-  const data = await getData();
+const Blog = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedData = await getData();
+        setData(fetchedData);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className={styles.mainContainer}>
       {data.map((item) => (
